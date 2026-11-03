@@ -5,17 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello Friend</title>
     <style>
-        /* Сброс отступов */
+        /* Сброс отступов и настройка шрифтов */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        /* Белый фон, выравнивание по центру экрана */
+        /* Белый фон, центрирование по вертикали и горизонтали */
         body {
             background-color: #ffffff;
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -23,20 +23,38 @@
             min-height: 100vh;
             text-align: center;
             color: #000000;
+            /* Плавное появление страницы */
+            animation: fadeIn 2s ease-in-out;
         }
 
-        /* Символ ☉ */
+        /* Настройка символа */
         .symbol {
-            font-size: 140px;      /* Размер символа */
+            font-family: "Arial Unicode MS", "Segoe UI Symbol", sans-serif; /* Гарантирует правильное отображение символа */
+            font-size: 60px;      /* Уменьшенный размер символа */
             line-height: 1;
-            margin-bottom: 20px;   /* Отступ до надписи */
+            margin-bottom: 20px;  /* Отступ до надписи */
+            /* Легкая пульсация символа */
+            animation: pulse 4s infinite ease-in-out;
         }
 
-        /* Надпись Hello Friend */
+        /* Настройка надписи */
         h1 {
-            font-size: 3rem;       /* Размер шрифта */
-            font-weight: 900;      /* Максимальная жирность */
-            letter-spacing: 2px;   /* Расстояние между буквами */
+            font-size: 1.8rem;     /* Уменьшенный размер шрифта */
+            font-weight: 800;      /* Жирный шрифт */
+            letter-spacing: 3px;   /* Расстояние между буквами для стиля */
+            text-transform: uppercase; /* Делает текст капсом для строгости (можно убрать) */
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
         }
     </style>
 </head>
@@ -47,6 +65,9 @@
 
     <!-- Название -->
     <h1>Hello Friend</h1>
+
+    <!-- Скрытый след для внимательных -->
+    <!-- Ты видишь код. Значит, ты один из нас. Следующая точка — на доске объявлений. -->
 
 </body>
 </html>
