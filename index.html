@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Секретная страница приветствия">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#f0f2f5">
     <title>Hello Friend</title>
     <style>
         *,
@@ -14,6 +17,11 @@
             box-sizing: border-box;
         }
 
+        html,
+        body {
+            height: 100%;
+        }
+
         body {
             background: linear-gradient(135deg, #ffffff 0%, #f0f2f5 100%);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -21,37 +29,70 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            min-height: 100dvh;
             text-align: center;
             color: #1a1a1a;
-            overflow: hidden;
-            animation: fadeIn 2s ease-in-out;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+            animation: fadeIn 1.2s ease-out both;
         }
 
         .symbol {
-            font-family: "Segoe UI Symbol", "Apple Color Emoji", sans-serif;
-            font-size: 5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 96px;
+            height: 96px;
+            margin-bottom: 1rem;
+            padding: 0;
+            font-family: "Segoe UI Symbol", "Apple Color Emoji", "Noto Sans Symbols 2", sans-serif;
+            font-size: 3rem;
             line-height: 1;
-            margin-bottom: 1.5rem;
             color: #333;
-            text-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+            cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            border: 0;
+            border-radius: 50%;
+            background: transparent;
+            transition: transform 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
             animation: pulse 4s infinite ease-in-out;
-            will-change: transform, opacity;
+            will-change: transform;
+            touch-action: manipulation;
+        }
+
+        .symbol:hover {
+            color: #000;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .symbol:active {
+            transform: scale(0.92);
+            transition-duration: 0.08s;
+        }
+
+        .symbol:focus-visible {
+            outline: 2px solid #333;
+            outline-offset: 4px;
+        }
+
+        .symbol[aria-disabled="true"] {
+            cursor: default;
+            opacity: 0.5;
+            animation: none;
+            pointer-events: none;
         }
 
         h1 {
-            font-size: clamp(1.5rem, 5vw, 2.2rem);
+            font-size: clamp(1.1rem, 3.5vw, 1.6rem);
             font-weight: 800;
             letter-spacing: 0.3em;
             text-transform: uppercase;
             color: #222;
-            transition: color 0.3s ease, transform 0.3s ease;
-            cursor: default;
-        }
-
-        h1:hover {
-            color: #0056b3;
-            transform: scale(1.02);
+            user-select: none;
+            pointer-events: none;
         }
 
         @keyframes fadeIn {
@@ -60,23 +101,121 @@
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
+            0%, 100% { transform: scale(1); opacity: 0.85; }
             50% { transform: scale(1.05); opacity: 1; }
         }
 
         @media (prefers-reduced-motion: reduce) {
-            body, .symbol, h1 {
+            body,
+            .symbol {
                 animation: none;
+            }
+            .symbol {
                 transition: none;
+            }
+        }
+
+        @media (prefers-contrast: more) {
+            .symbol {
+                color: #000;
+                text-shadow: none;
+            }
+            h1 {
+                color: #000;
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="symbol" aria-hidden="true">☉</div>
+    <button type="button" class="symbol" id="magicSymbol" aria-label="Открыть случайную ссылку">☉</button>
 
     <h1>Hello Friend</h1>
+
+    <script>
+        (() => {
+            "use strict";
+
+            const rawLinks = [
+                "https://ru.wikipedia.org/wiki/Невидимка_(значения)",
+                "https://www.magnific.com/ru/free-photos-vectors/символ-глаз",
+                "https://mrrobot.fandom.com/ru/wiki/Привет,_друг"
+            ];
+
+            const isValidUrl = (value) => {
+                if (typeof value !== "string" || value.trim() === "") return false;
+                try {
+                    const parsed = new URL(value);
+                    return parsed.protocol === "https:" || parsed.protocol === "http:";
+                } catch {
+                    return false;
+                }
+            };
+
+            const links = rawLinks.filter(isValidUrl);
+
+            const symbol = document.getElementById("magicSymbol");
+            if (!symbol) return;
+
+            if (links.length === 0) {
+                symbol.setAttribute("aria-disabled", "true");
+                symbol.setAttribute("aria-label", "Ссылки недоступны");
+                return;
+            }
+
+            let lastIndex = -1;
+            let isOpening = false;
+            let resetTimer = 0;
+
+            const pickRandomIndex = () => {
+                if (links.length === 1) return 0;
+                let index;
+                do {
+                    index = Math.floor(Math.random() * links.length);
+                } while (index === lastIndex);
+                lastIndex = index;
+                return index;
+            };
+
+            const openRandomLink = () => {
+                if (isOpening) return;
+                isOpening = true;
+
+                const url = links[pickRandomIndex()];
+                let newTab = null;
+
+                try {
+                    newTab = window.open(url, "_blank", "noopener,noreferrer");
+                } catch {
+                    newTab = null;
+                }
+
+                if (!newTab) {
+                    window.location.assign(url);
+                }
+
+                window.clearTimeout(resetTimer);
+                resetTimer = window.setTimeout(() => {
+                    isOpening = false;
+                }, 400);
+            };
+
+            symbol.addEventListener("click", openRandomLink);
+
+            symbol.addEventListener("keydown", (event) => {
+                if (event.repeat) return;
+                if (event.key === "Enter" || event.key === " " || event.key === "Spacebar") {
+                    event.preventDefault();
+                    openRandomLink();
+                }
+            });
+
+            window.addEventListener("pageshow", () => {
+                isOpening = false;
+                window.clearTimeout(resetTimer);
+            });
+        })();
+    </script>
 
 </body>
 </html>
