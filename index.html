@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello Friend</title>
+    <style>
+        /* Сброс отступов */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Белый фон, выравнивание по центру */
+        body {
+            background-color: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            color: #000000;
+            padding: 20px;
+        }
+
+        /* Надпись Hello Friend */
+        h1 {
+            font-size: 3rem;       /* Размер шрифта */
+            font-weight: 900;      /* Максимальная жирность */
+            letter-spacing: 2px;   /* Расстояние между буквами */
+            margin-bottom: 40px;   /* Отступ до символа */
+        }
+
+        /* Символ ☉ */
+        .symbol {
+            font-size: 120px;      /* Большой размер символа */
+            line-height: 1;
+            margin-bottom: 50px;
+        }
+
+        /* Текст манифеста */
+        .manifesto {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 600px;
+            color: #333333;
+            margin-bottom: 60px;
+        }
+
+        /* Ссылка на Session */
+        .contact {
+            font-size: 1rem;
+            color: #000000;
+            text-decoration: none;
+            border-bottom: 2px solid #000000;
+            padding-bottom: 2px;
+            font-weight: bold;
+        }
+
+        .contact:hover {
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Hello Friend</h1>
+
+    <div class="symbol">☉</div>
+
+    <div class="manifesto">
+        Мы — невидимки. Те, кто не причиняет вреда.<br>
+        Мы просто наблюдаем — и иногда оставляем следы<br>
+        для тех, кто достаточно внимателен, чтобы их найти.
+    </div>
+
+    <!-- Замени ТВОЙ_ID на свой реальный ID в Session -->
+    <a href="https://session.im/ТВОЙ_ID" class="contact" target="_blank">
+        Найти нас в Session
+    </a>
+
+</body>
+</html>
