@@ -7,6 +7,8 @@
     <meta name="robots" content="noindex, nofollow">
     <meta name="color-scheme" content="light">
     <meta name="theme-color" content="#f0f2f5">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="Referrer-Policy" content="no-referrer">
     <title>Hello Friend</title>
     <style>
         *,
@@ -17,8 +19,7 @@
             box-sizing: border-box;
         }
 
-        html,
-        body {
+        html {
             height: 100%;
         }
 
@@ -30,6 +31,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100dvh;
+            min-height: 100vh;
             text-align: center;
             color: #1a1a1a;
             overflow-x: hidden;
@@ -83,6 +85,7 @@
             opacity: 0.5;
             animation: none;
             pointer-events: none;
+            text-shadow: none;
         }
 
         h1 {
@@ -93,6 +96,55 @@
             color: #222;
             user-select: none;
             pointer-events: none;
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 2rem;
+            transform: translate(-50%, 1.5rem);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            max-width: calc(100vw - 2rem);
+            padding: 0.85rem 1.25rem;
+            font-size: 0.9rem;
+            line-height: 1.3;
+            color: #fff;
+            background: #1f2328;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .toast.is-visible {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        .toast__icon {
+            flex-shrink: 0;
+            font-size: 1.1rem;
+        }
+
+        .toast__text {
+            min-width: 0;
+            overflow-wrap: break-word;
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
 
         @keyframes fadeIn {
@@ -113,6 +165,9 @@
             .symbol {
                 transition: none;
             }
+            .toast {
+                transition: opacity 0.15s ease;
+            }
         }
 
         @media (prefers-contrast: more) {
@@ -123,6 +178,9 @@
             h1 {
                 color: #000;
             }
+            .toast {
+                border: 2px solid #fff;
+            }
         }
     </style>
 </head>
@@ -132,34 +190,88 @@
 
     <h1>Hello Friend</h1>
 
+    <div id="toast" class="toast" role="alert" aria-live="assertive">
+        <span class="toast__icon" aria-hidden="true">🔗</span>
+        <span class="toast__text" id="toastText"></span>
+    </div>
+
+    <noscript>
+        <p style="margin-top: 1.5rem; font-size: 0.9rem; color: #666;">
+            Для работы интерактивных элементов требуется JavaScript.
+        </p>
+    </noscript>
+
     <script>
         (() => {
             "use strict";
 
             const rawLinks = [
-                "https://ru.wikipedia.org/wiki/Невидимка_(значения)",
+                "https://mrrobot.fandom.com/ru/wiki/Привет,_друг",
                 "https://www.magnific.com/ru/free-photos-vectors/символ-глаз",
-                "https://mrrobot.fandom.com/ru/wiki/Привет,_друг"
+                "https://mrrobot.fandom.com/ru/wiki/Fsociety",
+                "https://rickandmorty.fandom.com/wiki/Wubba_Lubba_dub-dub",
+                "https://ru.wikipedia.org/wiki/Психическое_расстройство",
+                "https://ru.wikipedia.org/wiki/Невидимость",
+                "https://ru.wikipedia.org/wiki/Одиночество",
+                "https://ru.wikipedia.org/wiki/Интернет",
+                "https://ru.wikipedia.org/wiki/Белый_хакер",
+                "https://ru.wikipedia.org/wiki/Чёрная_шляпа",
+                "https://evilclowns.narod.ru/clay.htm?ysclid=mw27jzfe39838536538",
+                "https://xakersalien.neocities.org/xaker"
             ];
 
+            const ALLOWED_PROTOCOLS = new Set(["https:", "http:"]);
+            const MAX_URL_LENGTH = 2048;
+            const TOAST_DURATION = 3500;
+
             const isValidUrl = (value) => {
-                if (typeof value !== "string" || value.trim() === "") return false;
+                if (typeof value !== "string") return false;
+                const trimmed = value.trim();
+                if (trimmed === "" || trimmed.length > MAX_URL_LENGTH) return false;
+
                 try {
-                    const parsed = new URL(value);
-                    return parsed.protocol === "https:" || parsed.protocol === "http:";
+                    const parsed = new URL(trimmed);
+                    return ALLOWED_PROTOCOLS.has(parsed.protocol);
                 } catch {
                     return false;
                 }
             };
 
-            const links = rawLinks.filter(isValidUrl);
+            const seen = new Set();
+            const links = rawLinks.filter((url) => {
+                if (!isValidUrl(url)) return false;
+                if (seen.has(url)) return false;
+                seen.add(url);
+                return true;
+            });
 
             const symbol = document.getElementById("magicSymbol");
+            const toast = document.getElementById("toast");
+            const toastText = document.getElementById("toastText");
+
             if (!symbol) return;
+
+            let toastTimer = 0;
+
+            const hideToast = () => {
+                window.clearTimeout(toastTimer);
+                toastTimer = 0;
+                if (toast) toast.classList.remove("is-visible");
+            };
+
+            const showToast = (message, duration = TOAST_DURATION) => {
+                if (!toast || !toastText) return;
+                toastText.textContent = message;
+                toast.classList.add("is-visible");
+                window.clearTimeout(toastTimer);
+                toastTimer = window.setTimeout(hideToast, duration);
+            };
 
             if (links.length === 0) {
                 symbol.setAttribute("aria-disabled", "true");
                 symbol.setAttribute("aria-label", "Ссылки недоступны");
+                symbol.setAttribute("tabindex", "-1");
+                symbol.setAttribute("disabled", "");
                 return;
             }
 
@@ -170,9 +282,11 @@
             const pickRandomIndex = () => {
                 if (links.length === 1) return 0;
                 let index;
+                let attempts = 0;
                 do {
                     index = Math.floor(Math.random() * links.length);
-                } while (index === lastIndex);
+                    attempts++;
+                } while (index === lastIndex && attempts < 50);
                 lastIndex = index;
                 return index;
             };
@@ -182,15 +296,36 @@
                 isOpening = true;
 
                 const url = links[pickRandomIndex()];
-                let newTab = null;
 
+                try {
+                    const parsed = new URL(url);
+                    if (!ALLOWED_PROTOCOLS.has(parsed.protocol)) {
+                        isOpening = false;
+                        showToast("Ссылка недоступна");
+                        return;
+                    }
+                } catch {
+                    isOpening = false;
+                    showToast("Ссылка недоступна");
+                    return;
+                }
+
+                let newTab = null;
                 try {
                     newTab = window.open(url, "_blank", "noopener,noreferrer");
                 } catch {
                     newTab = null;
                 }
 
-                if (!newTab) {
+                if (newTab) {
+                    try {
+                        newTab.opener = null;
+                    } catch {
+                        /* cross-origin — игнорируем */
+                    }
+                    showToast("Открыта случайная ссылка");
+                } else {
+                    showToast("Переход по случайной ссылке…");
                     window.location.assign(url);
                 }
 
@@ -210,9 +345,20 @@
                 }
             });
 
-            window.addEventListener("pageshow", () => {
+            toast.addEventListener("click", hideToast);
+
+            window.addEventListener("pageshow", (event) => {
                 isOpening = false;
                 window.clearTimeout(resetTimer);
+                resetTimer = 0;
+                if (event.persisted) hideToast();
+            });
+
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden) {
+                    window.clearTimeout(resetTimer);
+                    resetTimer = 0;
+                }
             });
         })();
     </script>
