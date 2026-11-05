@@ -11,300 +11,110 @@
     <meta http-equiv="Referrer-Policy" content="no-referrer">
     <title>Hello Friend</title>
     <style>
-        *,
-        *::before,
-        *::after {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            height: 100%;
-        }
-
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { height: 100%; }
         body {
             background: linear-gradient(135deg, #ffffff 0%, #f0f2f5 100%);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            min-height: 100dvh;
-            text-align: center;
-            color: #1a1a1a;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            text-rendering: optimizeLegibility;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-height: 100vh; min-height: 100dvh;
+            text-align: center; color: #1a1a1a; overflow-x: hidden;
+            -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
             animation: fadeIn 1.2s ease-out both;
         }
-
         .symbol {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 96px;
-            height: 96px;
-            margin-bottom: 1rem;
-            padding: 0;
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 96px; height: 96px; margin-bottom: 1rem; padding: 0;
             font-family: "Segoe UI Symbol", "Apple Color Emoji", "Noto Sans Symbols 2", sans-serif;
-            font-size: 3rem;
-            line-height: 1;
-            color: #333;
-            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
-            cursor: pointer;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            border: 0;
-            border-radius: 50%;
-            background: transparent;
-            transition: transform 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+            font-size: 3rem; line-height: 1; color: #333;
+            text-shadow: 0 3px 8px rgba(0,0,0,0.08);
+            cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent;
+            border: 0; border-radius: 50%; background: transparent;
+            transition: transform .2s ease, color .2s ease, box-shadow .2s ease, opacity .2s ease;
             animation: pulse 4s infinite ease-in-out;
             touch-action: manipulation;
         }
-
-        .symbol:hover {
-            color: #000;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        .symbol:hover { color: #000; box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+        .symbol:active { transform: scale(.92); transition-duration: .08s; }
+        .symbol:focus-visible { outline: 2px solid #333; outline-offset: 4px; }
+        .symbol[aria-disabled="true"], .symbol.is-busy {
+            cursor: default; opacity: .5; animation: none; pointer-events: none; text-shadow: none;
         }
-
-        .symbol:active {
-            transform: scale(0.92);
-            transition-duration: 0.08s;
-        }
-
-        .symbol:focus-visible {
-            outline: 2px solid #333;
-            outline-offset: 4px;
-        }
-
-        .symbol[aria-disabled="true"],
-        .symbol.is-busy {
-            cursor: default;
-            opacity: 0.5;
-            animation: none;
-            pointer-events: none;
-            text-shadow: none;
-        }
-
         h1 {
-            font-size: clamp(1.1rem, 3.5vw, 1.6rem);
-            font-weight: 800;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            color: #222;
-            user-select: none;
-            pointer-events: none;
+            font-size: clamp(1.1rem, 3.5vw, 1.6rem); font-weight: 800; letter-spacing: .3em;
+            text-transform: uppercase; color: #222; user-select: none; pointer-events: none;
         }
-
         .toast-stack {
-            position: fixed;
-            left: 50%;
-            bottom: 2rem;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            gap: 0.6rem;
-            width: min(92vw, 440px);
-            z-index: 9999;
-            pointer-events: none;
+            position: fixed; left: 50%; bottom: 2rem; transform: translateX(-50%);
+            display: flex; flex-direction: column; align-items: stretch; gap: .6rem;
+            width: min(92vw, 440px); z-index: 9999; pointer-events: none;
         }
-
         .toast {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            width: 100%;
-            padding: 0.85rem 1.25rem;
-            font-size: 0.9rem;
-            line-height: 1.3;
-            color: #fff;
-            background: #1f2328;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
-            opacity: 0;
-            transform: translateY(1.5rem);
-            pointer-events: none;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            overflow: hidden;
+            position: relative; display: flex; align-items: center; gap: .6rem;
+            width: 100%; padding: .85rem 1.25rem; font-size: .9rem; line-height: 1.3;
+            color: #fff; background: #1f2328; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.22);
+            opacity: 0; transform: translateY(1.5rem); pointer-events: none;
+            transition: opacity .3s ease, transform .3s ease; overflow: hidden;
         }
-
-        .toast.is-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .toast--main.is-visible {
-            pointer-events: auto;
-        }
-
-        .toast--main.is-cancelable {
-            cursor: pointer;
-        }
-
+        .toast.is-visible { opacity: 1; transform: translateY(0); }
+        .toast--main.is-visible { pointer-events: auto; }
+        .toast--main.is-cancelable { cursor: pointer; }
         .toast--description {
-            background: #2b3138;
-            font-size: 0.82rem;
-            padding: 0.7rem 1rem;
-            align-items: flex-start;
+            background: #2b3138; font-size: .82rem; padding: .7rem 1rem; align-items: flex-start;
         }
-
-        .toast--description.is-visible {
-            pointer-events: none;
-        }
-
-        .toast--description .toast__icon {
-            font-size: 0.95rem;
-            margin-top: 0.1rem;
-        }
-
-        .toast__icon {
-            flex-shrink: 0;
-            font-size: 1.1rem;
-        }
-
-        .toast__text {
-            min-width: 0;
-            overflow-wrap: break-word;
-            word-break: break-word;
-        }
-
-        .toast__text a {
-            color: #7cc7ff;
-            text-decoration: underline;
-            text-underline-offset: 2px;
-            pointer-events: auto;
-        }
-
+        .toast--description.is-visible { pointer-events: none; }
+        .toast--description .toast__icon { font-size: .95rem; margin-top: .1rem; }
+        .toast__icon { flex-shrink: 0; font-size: 1.1rem; }
+        .toast__text { min-width: 0; overflow-wrap: break-word; word-break: break-word; }
+        .toast__text a { color: #7cc7ff; text-decoration: underline; text-underline-offset: 2px; pointer-events: auto; }
         .toast__progress {
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            height: 3px;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.25);
+            position: absolute; left: 0; bottom: 0; height: 3px; width: 100%;
+            background: rgba(255,255,255,0.25);
         }
-
         .toast__progress::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: #7cc7ff;
-            transform-origin: left center;
-            transform: scaleX(1);
+            content: ""; position: absolute; inset: 0; background: #7cc7ff;
+            transform-origin: left center; transform: scaleX(1);
         }
-
         .toast.is-visible .toast__progress::after {
             animation: shrinkBar var(--toast-duration, 8000ms) linear forwards;
         }
-
-        .toast.is-canceled .toast__progress::after {
-            animation: none;
-            transform: scaleX(0);
-        }
-
+        .toast.is-canceled .toast__progress::after { animation: none; transform: scaleX(0); }
         .hint {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-            width: 100%;
-            margin-top: 0.15rem;
-            padding: 0.5rem 0.9rem;
-            font-size: 0.75rem;
-            line-height: 1.3;
-            color: #5a6169;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.72);
-            border: 1px solid rgba(0, 0, 0, 0.06);
-            border-radius: 10px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            pointer-events: none;
-            user-select: none;
+            display: flex; align-items: center; justify-content: center; gap: .4rem;
+            width: 100%; margin-top: .15rem; padding: .5rem .9rem;
+            font-size: .75rem; line-height: 1.3; color: #5a6169; text-align: center;
+            background: rgba(255,255,255,0.72); border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 10px; box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            pointer-events: none; user-select: none;
         }
-
-        .hint--action {
-            color: #333;
-            font-size: 0.78rem;
-        }
-
-        .hint__icon {
-            flex-shrink: 0;
-            font-size: 0.9rem;
-            line-height: 1;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.85; }
-            50% { transform: scale(1.05); opacity: 1; }
-        }
-
-        @keyframes shrinkBar {
-            from { transform: scaleX(1); }
-            to { transform: scaleX(0); }
-        }
-
+        .hint--action { color: #333; font-size: .78rem; }
+        .hint__icon { flex-shrink: 0; font-size: .9rem; line-height: 1; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulse { 0%,100% { transform: scale(1); opacity: .85; } 50% { transform: scale(1.05); opacity: 1; } }
+        @keyframes shrinkBar { from { transform: scaleX(1); } to { transform: scaleX(0); } }
         @media (prefers-reduced-motion: reduce) {
-            body,
-            .symbol {
-                animation: none;
-            }
-            .symbol {
-                transition: none;
-            }
-            .toast {
-                transition: opacity 0.15s ease;
-            }
-            .toast.is-visible .toast__progress::after {
-                animation: none;
-                transform: scaleX(1);
-            }
+            body, .symbol { animation: none; }
+            .symbol { transition: none; }
+            .toast { transition: opacity .15s ease; }
+            .toast.is-visible .toast__progress::after { animation: none; transform: scaleX(1); }
         }
-
         @media (prefers-contrast: more) {
-            .symbol {
-                color: #000;
-                text-shadow: none;
-            }
-            h1 {
-                color: #000;
-            }
-            .toast {
-                border: 2px solid #fff;
-            }
-            .hint {
-                color: #000;
-                background: #fff;
-                border-color: #000;
-            }
+            .symbol { color: #000; text-shadow: none; }
+            h1 { color: #000; }
+            .toast { border: 2px solid #fff; }
+            .hint { color: #000; background: #fff; border-color: #000; }
         }
-
         @media (max-width: 360px) {
-            .toast-stack {
-                bottom: 1.25rem;
-                gap: 0.5rem;
-            }
-            .hint {
-                font-size: 0.7rem;
-                padding: 0.45rem 0.7rem;
-            }
+            .toast-stack { bottom: 1.25rem; gap: .5rem; }
+            .hint { font-size: .7rem; padding: .45rem .7rem; }
         }
     </style>
 </head>
 <body>
 
     <button type="button" class="symbol" id="magicSymbol" aria-label="Открыть случайную ссылку">☉</button>
-
     <h1>Hello Friend</h1>
 
     <div class="toast-stack">
@@ -328,9 +138,7 @@
     </div>
 
     <noscript>
-        <p style="margin-top: 1.5rem; font-size: 0.9rem; color: #666;">
-            Для работы интерактивных элементов требуется JavaScript.
-        </p>
+        <p style="margin-top:1.5rem;font-size:.9rem;color:#666;">Для работы интерактивных элементов требуется JavaScript.</p>
     </noscript>
 
     <script>
@@ -367,7 +175,22 @@
                 { url: "https://oskarstalberg.com/Townscaper", description: "Городской конструктор" },
                 { url: "https://userinyerface.com", description: "Худший интерфейс в мире" },
                 { url: "https://vivirenremoto.github.io/doomcaptcha", description: "DOOM вместо капчи" },
-                { url: "https://bongo.cat", description: "Кот играет на бонго" }
+                { url: "https://bongo.cat", description: "Кот играет на бонго" },
+                { url: "https://3.14-pi.net", description: "Число Пи, где каждой цифре соответствует звук" },
+                { url: "https://oshimaland.com", description: "Карта заброшенных домов по всему миру" },
+                { url: "https://midomi.com", description: "Поиск песни по напеву или мелодии" },
+                { url: "https://astronaut.io", description: "Случайные видео с YouTube без просмотров" },
+                { url: "https://buttonbass.com", description: "Создание музыки из интерактивных кубиков" },
+                { url: "https://centennialbulb.org", description: "Трансляция с лампочки, горящей с 1901 года" },
+                { url: "https://classic.minecraft.net", description: "Minecraft Classic в браузере" },
+                { url: "https://driveandlisten.app", description: "Виртуальная поездка по городам под местное радио" },
+                { url: "https://abbeyroad.com/crossing", description: "Веб-камера перехода с обложки Beatles" },
+                { url: "https://allcalc.ru/node/56", description: "Калькулятор длины волос и ногтей" },
+                { url: "https://books.google.com/ngrams", description: "График частоты слов в книгах с 1700 года" },
+                { url: "https://privnote.com", description: "Самоуничтожающиеся сообщения" },
+                { url: "https://rifme.net", description: "Генератор рифм к русским словам" },
+                { url: "https://seatguru.com", description: "Выбор места в самолёте" },
+                { url: "https://playback.fm/birthday-song", description: "Песня №1 в день вашего рождения" }
             ];
 
             const ALLOWED_PROTOCOLS = new Set(["https:", "http:"]);
@@ -379,12 +202,8 @@
                 if (typeof value !== "string") return false;
                 const trimmed = value.trim();
                 if (trimmed === "" || trimmed.length > MAX_URL_LENGTH) return false;
-                try {
-                    const parsed = new URL(trimmed);
-                    return ALLOWED_PROTOCOLS.has(parsed.protocol);
-                } catch {
-                    return false;
-                }
+                try { return ALLOWED_PROTOCOLS.has(new URL(trimmed).protocol); }
+                catch { return false; }
             };
 
             const seen = new Set();
@@ -427,24 +246,13 @@
             let activeUrl = null;
             let secondsLeft = 0;
 
-            const clearMainTimer = () => {
-                if (toastTimer) { window.clearTimeout(toastTimer); toastTimer = 0; }
-            };
-
-            const clearDescTimer = () => {
-                if (descTimer) { window.clearTimeout(descTimer); descTimer = 0; }
-            };
-
+            const clearMainTimer = () => { if (toastTimer) { window.clearTimeout(toastTimer); toastTimer = 0; } };
+            const clearDescTimer = () => { if (descTimer) { window.clearTimeout(descTimer); descTimer = 0; } };
             const clearRedirectTimers = () => {
                 if (redirectTimer) { window.clearTimeout(redirectTimer); redirectTimer = 0; }
                 if (countdownTimer) { window.clearInterval(countdownTimer); countdownTimer = 0; }
             };
-
-            const clearAllTimers = () => {
-                clearMainTimer();
-                clearDescTimer();
-                clearRedirectTimers();
-            };
+            const clearAllTimers = () => { clearMainTimer(); clearDescTimer(); clearRedirectTimers(); };
 
             const setBusy = (busy) => {
                 isOpening = busy;
@@ -463,17 +271,12 @@
                 if (!toast) return;
                 toast.classList.remove("is-visible", "is-cancelable", "is-canceled");
             };
-
             const hideDescToast = () => {
                 clearDescTimer();
                 if (!toastDesc) return;
                 toastDesc.classList.remove("is-visible");
             };
-
-            const hideAllToasts = () => {
-                hideMainToast();
-                hideDescToast();
-            };
+            const hideAllToasts = () => { hideMainToast(); hideDescToast(); };
 
             const showMainToast = (message, { duration = CANCEL_WINDOW, cancelable = false, canceled = false } = {}) => {
                 if (!toast || !toastText) return;
@@ -491,18 +294,13 @@
             const setDescContent = (description, url) => {
                 if (!toastDescText) return;
                 toastDescText.textContent = "";
-
-                if (description) {
-                    toastDescText.appendChild(document.createTextNode(description));
-                }
-
+                if (description) toastDescText.appendChild(document.createTextNode(description));
                 if (url) {
                     let safeHref = "";
                     try {
                         const parsed = new URL(url);
                         if (ALLOWED_PROTOCOLS.has(parsed.protocol)) safeHref = parsed.href;
                     } catch { safeHref = ""; }
-
                     if (safeHref) {
                         if (description) toastDescText.appendChild(document.createTextNode(" · "));
                         const anchor = document.createElement("a");
@@ -513,10 +311,7 @@
                         toastDescText.appendChild(anchor);
                     }
                 }
-
-                if (!toastDescText.textContent) {
-                    toastDescText.textContent = "Переход по случайной ссылке…";
-                }
+                if (!toastDescText.textContent) toastDescText.textContent = "Переход по случайной ссылке…";
             };
 
             const showDescToast = (description, url, { duration = CANCEL_WINDOW } = {}) => {
@@ -539,19 +334,14 @@
 
             const navigateTo = (url) => {
                 let newTab = null;
-                try {
-                    newTab = window.open(url, "_blank", "noopener,noreferrer");
-                } catch { newTab = null; }
-
+                try { newTab = window.open(url, "_blank", "noopener,noreferrer"); }
+                catch { newTab = null; }
                 if (newTab) {
                     try { newTab.opener = null; } catch { /* cross-origin */ }
                     return true;
                 }
-
-                try {
-                    window.location.assign(url);
-                    return false;
-                } catch { return false; }
+                try { window.location.assign(url); return false; }
+                catch { return false; }
             };
 
             const cancelPending = () => {
@@ -575,7 +365,6 @@
 
             const openRandomLink = () => {
                 if (isOpening) return;
-
                 const item = links[pickRandomIndex()];
                 const url = item.url;
 
@@ -602,31 +391,21 @@
                     cancelable: true
                 });
                 showDescToast(item.description, url, { duration: CANCEL_WINDOW });
-
                 startCountdown();
 
                 redirectTimer = window.setTimeout(() => {
                     clearRedirectTimers();
-
                     const target = activeUrl;
-                    if (!target) {
-                        setBusy(false);
-                        hideAllToasts();
-                        return;
-                    }
-
+                    if (!target) { setBusy(false); hideAllToasts(); return; }
                     if (toastText) toastText.textContent = "Переход по случайной ссылке…";
                     toast.classList.remove("is-cancelable");
-
                     const openedInTab = navigateTo(target);
                     setBusy(false);
-
                     if (openedInTab) hideAllToasts();
                 }, REDIRECT_DELAY);
             };
 
             symbol.addEventListener("click", openRandomLink);
-
             symbol.addEventListener("keydown", (event) => {
                 if (event.repeat) return;
                 if (event.key === "Enter" || event.key === " " || event.key === "Spacebar") {
@@ -648,20 +427,14 @@
 
             document.addEventListener("visibilitychange", () => {
                 if (document.hidden) {
-                    if (countdownTimer) {
-                        window.clearInterval(countdownTimer);
-                        countdownTimer = 0;
-                    }
+                    if (countdownTimer) { window.clearInterval(countdownTimer); countdownTimer = 0; }
                 } else if (isOpening && redirectTimer && secondsLeft > 0) {
                     startCountdown();
                 }
             });
 
-            window.addEventListener("pagehide", () => {
-                clearAllTimers();
-            });
+            window.addEventListener("pagehide", () => { clearAllTimers(); });
         })();
     </script>
-
 </body>
 </html>
