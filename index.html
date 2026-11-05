@@ -99,15 +99,26 @@
             pointer-events: none;
         }
 
-        .toast {
+        .toast-stack {
             position: fixed;
             left: 50%;
             bottom: 2rem;
-            transform: translate(-50%, 1.5rem);
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.6rem;
+            width: min(92vw, 440px);
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .toast {
+            position: relative;
             display: flex;
             align-items: center;
             gap: 0.6rem;
-            max-width: calc(100vw - 2rem);
+            width: 100%;
             padding: 0.85rem 1.25rem;
             font-size: 0.9rem;
             line-height: 1.3;
@@ -116,20 +127,39 @@
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
             opacity: 0;
+            transform: translateY(1.5rem);
             pointer-events: none;
-            z-index: 9999;
             transition: opacity 0.3s ease, transform 0.3s ease;
             overflow: hidden;
         }
 
         .toast.is-visible {
             opacity: 1;
-            transform: translate(-50%, 0);
+            transform: translateY(0);
         }
 
-        .toast.is-cancelable {
+        .toast--main.is-visible {
             pointer-events: auto;
+        }
+
+        .toast--main.is-cancelable {
             cursor: pointer;
+        }
+
+        .toast--description {
+            background: #2b3138;
+            font-size: 0.82rem;
+            padding: 0.7rem 1rem;
+            align-items: flex-start;
+        }
+
+        .toast--description.is-visible {
+            pointer-events: none;
+        }
+
+        .toast--description .toast__icon {
+            font-size: 0.95rem;
+            margin-top: 0.1rem;
         }
 
         .toast__icon {
@@ -140,6 +170,14 @@
         .toast__text {
             min-width: 0;
             overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .toast__text a {
+            color: #7cc7ff;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            pointer-events: auto;
         }
 
         .toast__progress {
@@ -161,7 +199,7 @@
         }
 
         .toast.is-visible .toast__progress::after {
-            animation: shrinkBar var(--toast-duration, 3500ms) linear forwards;
+            animation: shrinkBar var(--toast-duration, 8000ms) linear forwards;
         }
 
         .toast.is-canceled .toast__progress::after {
@@ -233,10 +271,16 @@
 
     <h1>Hello Friend</h1>
 
-    <div id="toast" class="toast" role="alert" aria-live="assertive">
-        <span class="toast__icon" aria-hidden="true">🔗</span>
-        <span class="toast__text" id="toastText"></span>
-        <span class="toast__progress" aria-hidden="true"></span>
+    <div class="toast-stack">
+        <div id="toast" class="toast toast--main" role="alert" aria-live="assertive">
+            <span class="toast__icon" aria-hidden="true">🔗</span>
+            <span class="toast__text" id="toastText"></span>
+            <span class="toast__progress" aria-hidden="true"></span>
+        </div>
+        <div id="toastDesc" class="toast toast--description" role="status" aria-live="polite">
+            <span class="toast__icon" aria-hidden="true">📝</span>
+            <span class="toast__text" id="toastDescText"></span>
+        </div>
     </div>
 
     <noscript>
@@ -250,23 +294,109 @@
             "use strict";
 
             const rawLinks = [
-                "https://mrrobot.fandom.com/ru/wiki/Привет,_друг",
-                "https://www.magnific.com/ru/free-photos-vectors/символ-глаз",
-                "https://ru.wikipedia.org/wiki/Невидимость",
-                "https://evilclowns.narod.ru/clay.htm?ysclid=mw27jzfe39838536538",
-                "https://xakersalien.neocities.org/xaker"
+                {
+                    url: "https://mrrobot.fandom.com/ru/wiki/Привет,_друг",
+                    description: "Секретная страница приветствия"
+                },
+                {
+                    url: "https://www.magnific.com/ru/free-photos-vectors/символ-глаз",
+                    description: "Символ глаза — векторные фото"
+                },
+                {
+                    url: "https://info.cern.ch/hypertext/WWW/TheProject.html",
+                    description: "Первый сайт в истории интернета"
+                },
+                {
+                    url: "https://thispersondoesnotexist.com",
+                    description: "Фото людей, которых не существует"
+                },
+                {
+                    url: "https://thequietplaceproject.xyz",
+                    description: "Минута тишины — проект"
+                },
+                {
+                    url: "https://optical.toys",
+                    description: "Набор оптических иллюзий"
+                },
+                {
+                    url: "https://theuselessweb.com",
+                    description: "Кнопка ведёт на случайный бесполезный сайт"
+                },
+                {
+                    url: "https://zoomquilt.org",
+                    description: "Бесконечно приближающаяся картина"
+                },
+                {
+                    url: "https://weavesilk.com",
+                    description: "Рисование симметричных светящихся линий"
+                },
+                {
+                    url: "https://patatap.com",
+                    description: "Каждая клавиша — звук и анимация"
+                },
+                {
+                    url: "https://window-swap.com",
+                    description: "Вид из чужого окна"
+                },
+                {
+                    url: "https://radio.garden",
+                    description: "Глобус с радиостанциями мира"
+                },
+                {
+                    url: "https://pointerpointer.com",
+                    description: "Люди указывают на ваш курсор"
+                },
+                {
+                    url: "https://973-eht-namuh-973.com",
+                    description: "Классика странного интернета — шифры"
+                },
+                {
+                    url: "https://wwwwwwwww.jodi.org",
+                    description: "Арт-проект, имитирующий сломанный компьютер"
+                },
+                {
+                    url: "https://superbad.com",
+                    description: "Старый арт-проект со странной навигацией"
+                },
+                {
+                    url: "https://heavensgate.com",
+                    description: "Сайт секты «Врата Рая»"
+                },
+                {
+                    url: "https://fifthnail.com",
+                    description: "Архив блога перед преступлениями"
+                },
+                {
+                    url: "https://uvb-76.ru",
+                    description: "The Buzzer — жужжащий сигнал с 1982"
+                },
+                {
+                    url: "https://priyom.org",
+                    description: "Логи передач номерных станций"
+                },
+                {
+                    url: "https://planecrashinfo.com",
+                    description: "Архив авиакатастроф и переговоров"
+                },
+                {
+                    url: "https://www.tdcj.texas.gov/death_row/dr_executed_offenders.html",
+                    description: "Техас: смертники и последние слова"
+                },
+                {
+                    url: "https://www.rotten.com",
+                    description: "Старейший шок-сайт с архивом"
+                }
             ];
 
             const ALLOWED_PROTOCOLS = new Set(["https:", "http:"]);
             const MAX_URL_LENGTH = 2048;
-            const REDIRECT_DELAY = 3000;
-            const CANCEL_WINDOW = REDIRECT_DELAY + 1200;
+            const REDIRECT_DELAY = 5000;
+            const CANCEL_WINDOW = REDIRECT_DELAY + 3000;
 
             const isValidUrl = (value) => {
                 if (typeof value !== "string") return false;
                 const trimmed = value.trim();
                 if (trimmed === "" || trimmed.length > MAX_URL_LENGTH) return false;
-
                 try {
                     const parsed = new URL(trimmed);
                     return ALLOWED_PROTOCOLS.has(parsed.protocol);
@@ -277,17 +407,24 @@
 
             const seen = new Set();
             const links = Object.freeze(
-                rawLinks.filter((url) => {
-                    if (!isValidUrl(url)) return false;
-                    if (seen.has(url)) return false;
-                    seen.add(url);
-                    return true;
-                })
+                rawLinks
+                    .filter((item) => item && isValidUrl(item.url))
+                    .map((item) => ({
+                        url: item.url.trim(),
+                        description: (item.description || "").trim()
+                    }))
+                    .filter((item) => {
+                        if (seen.has(item.url)) return false;
+                        seen.add(item.url);
+                        return true;
+                    })
             );
 
             const symbol = document.getElementById("magicSymbol");
             const toast = document.getElementById("toast");
             const toastText = document.getElementById("toastText");
+            const toastDesc = document.getElementById("toastDesc");
+            const toastDescText = document.getElementById("toastDescText");
 
             if (!symbol) return;
 
@@ -302,17 +439,32 @@
             let toastTimer = 0;
             let redirectTimer = 0;
             let countdownTimer = 0;
+            let descTimer = 0;
             let lastIndex = -1;
             let isOpening = false;
             let activeUrl = null;
 
-            const clearAllTimers = () => {
+            const clearMainTimer = () => {
                 window.clearTimeout(toastTimer);
+                toastTimer = 0;
+            };
+
+            const clearDescTimer = () => {
+                window.clearTimeout(descTimer);
+                descTimer = 0;
+            };
+
+            const clearRedirectTimers = () => {
                 window.clearTimeout(redirectTimer);
                 window.clearInterval(countdownTimer);
-                toastTimer = 0;
                 redirectTimer = 0;
                 countdownTimer = 0;
+            };
+
+            const clearAllTimers = () => {
+                clearMainTimer();
+                clearDescTimer();
+                clearRedirectTimers();
             };
 
             const setBusy = (busy) => {
@@ -327,34 +479,92 @@
                 }
             };
 
-            const hideToast = () => {
-                window.clearTimeout(toastTimer);
-                toastTimer = 0;
+            const hideMainToast = () => {
+                clearMainTimer();
                 if (!toast) return;
                 toast.classList.remove("is-visible", "is-cancelable", "is-canceled");
             };
 
-            const showToast = (message, { duration, cancelable = false, canceled = false } = {}) => {
+            const hideDescToast = () => {
+                clearDescTimer();
+                if (!toastDesc) return;
+                toastDesc.classList.remove("is-visible");
+            };
+
+            const hideAllToasts = () => {
+                hideMainToast();
+                hideDescToast();
+            };
+
+            const showMainToast = (message, { duration = CANCEL_WINDOW, cancelable = false, canceled = false } = {}) => {
                 if (!toast || !toastText) return;
                 toastText.textContent = message;
-                toast.style.setProperty("--toast-duration", (duration || CANCEL_WINDOW) + "ms");
+                toast.style.setProperty("--toast-duration", `${duration}ms`);
                 toast.classList.remove("is-visible", "is-cancelable", "is-canceled");
                 void toast.offsetWidth;
                 if (cancelable) toast.classList.add("is-cancelable");
                 if (canceled) toast.classList.add("is-canceled");
                 toast.classList.add("is-visible");
-                window.clearTimeout(toastTimer);
-                toastTimer = window.setTimeout(hideToast, duration || CANCEL_WINDOW);
+                clearMainTimer();
+                toastTimer = window.setTimeout(hideMainToast, duration);
+            };
+
+            const setDescContent = (description, url) => {
+                if (!toastDescText) return;
+                toastDescText.textContent = "";
+
+                if (description) {
+                    toastDescText.appendChild(document.createTextNode(description));
+                }
+
+                if (url) {
+                    let safeHref = "";
+                    try {
+                        const parsed = new URL(url);
+                        if (ALLOWED_PROTOCOLS.has(parsed.protocol)) {
+                            safeHref = parsed.href;
+                        }
+                    } catch {
+                        safeHref = "";
+                    }
+
+                    if (safeHref) {
+                        if (description) {
+                            toastDescText.appendChild(document.createTextNode(" · "));
+                        }
+                        const anchor = document.createElement("a");
+                        anchor.href = safeHref;
+                        anchor.target = "_blank";
+                        anchor.rel = "noopener noreferrer";
+                        anchor.textContent = safeHref.length > 60
+                            ? safeHref.slice(0, 57) + "…"
+                            : safeHref;
+                        toastDescText.appendChild(anchor);
+                    }
+                }
+
+                if (!toastDescText.textContent) {
+                    toastDescText.textContent = "Переход по случайной ссылке…";
+                }
+            };
+
+            const showDescToast = (description, url, { duration = CANCEL_WINDOW } = {}) => {
+                if (!toastDesc) return;
+                setDescContent(description, url);
+                toastDesc.classList.add("is-visible");
+                clearDescTimer();
+                descTimer = window.setTimeout(hideDescToast, duration);
             };
 
             const pickRandomIndex = () => {
-                if (links.length === 1) return 0;
-                let index;
-                let attempts = 0;
-                do {
-                    index = Math.floor(Math.random() * links.length);
-                    attempts++;
-                } while (index === lastIndex && attempts < 50);
+                if (links.length === 1) {
+                    lastIndex = 0;
+                    return 0;
+                }
+                let index = Math.floor(Math.random() * links.length);
+                if (index === lastIndex) {
+                    index = (index + 1 + Math.floor(Math.random() * (links.length - 1))) % links.length;
+                }
                 lastIndex = index;
                 return index;
             };
@@ -371,7 +581,7 @@
                     try {
                         newTab.opener = null;
                     } catch {
-                        /* cross-origin — игнорируем */
+                        /* cross-origin */
                     }
                     return true;
                 }
@@ -383,24 +593,28 @@
             const cancelPending = () => {
                 if (!isOpening) return;
                 clearAllTimers();
-                showToast("Переход отменён", { duration: 2000, canceled: true });
                 setBusy(false);
+                showMainToast("Переход отменён", { duration: 2000, canceled: true });
+                showDescToast("Переход отменён", null, { duration: 2000 });
             };
 
             const openRandomLink = () => {
                 if (isOpening) return;
 
-                const url = links[pickRandomIndex()];
+                const item = links[pickRandomIndex()];
+                const url = item.url;
 
                 let parsed;
                 try {
                     parsed = new URL(url);
                 } catch {
-                    showToast("Ссылка недоступна", { duration: 2500 });
+                    showMainToast("Ссылка недоступна", { duration: 2500 });
+                    showDescToast("Ссылка недоступна", null, { duration: 2500 });
                     return;
                 }
                 if (!ALLOWED_PROTOCOLS.has(parsed.protocol)) {
-                    showToast("Ссылка недоступна", { duration: 2500 });
+                    showMainToast("Ссылка недоступна", { duration: 2500 });
+                    showDescToast("Ссылка недоступна", null, { duration: 2500 });
                     return;
                 }
 
@@ -409,10 +623,11 @@
                 activeUrl = url;
 
                 let secondsLeft = Math.ceil(REDIRECT_DELAY / 1000);
-                showToast(`Переход по случайной ссылке через ${secondsLeft}…`, {
+                showMainToast(`Переход по случайной ссылке через ${secondsLeft}…`, {
                     duration: CANCEL_WINDOW,
                     cancelable: true
                 });
+                showDescToast(item.description, url, { duration: CANCEL_WINDOW });
 
                 countdownTimer = window.setInterval(() => {
                     secondsLeft -= 1;
@@ -429,6 +644,7 @@
                     const target = activeUrl;
                     if (!target) {
                         setBusy(false);
+                        hideAllToasts();
                         return;
                     }
 
@@ -439,7 +655,7 @@
                     setBusy(false);
 
                     if (openedInTab) {
-                        hideToast();
+                        hideAllToasts();
                     }
                 }, REDIRECT_DELAY);
             };
@@ -454,16 +670,15 @@
                 }
             });
 
-            toast.addEventListener("click", (event) => {
+            toast.addEventListener("click", () => {
                 if (!toast.classList.contains("is-cancelable")) return;
-                event.preventDefault();
                 cancelPending();
             });
 
             window.addEventListener("pageshow", (event) => {
                 clearAllTimers();
                 setBusy(false);
-                if (event.persisted) hideToast();
+                if (event.persisted) hideAllToasts();
             });
 
             document.addEventListener("visibilitychange", () => {
