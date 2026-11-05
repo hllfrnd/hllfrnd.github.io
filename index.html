@@ -206,7 +206,6 @@
             transform: scaleX(0);
         }
 
-        /* Постоянная подпись-подсказка под уведомлениями */
         .hint {
             display: flex;
             align-items: center;
@@ -227,6 +226,11 @@
             -webkit-backdrop-filter: blur(6px);
             pointer-events: none;
             user-select: none;
+        }
+
+        .hint--action {
+            color: #333;
+            font-size: 0.78rem;
         }
 
         .hint__icon {
@@ -313,6 +317,10 @@
             <span class="toast__icon" aria-hidden="true">📝</span>
             <span class="toast__text" id="toastDescText"></span>
         </div>
+        <p class="hint hint--action" role="note">
+            <span class="hint__icon" aria-hidden="true">☉</span>
+            <span>Нажмите на символ — откроется случайная ссылка.</span>
+        </p>
         <p class="hint" role="note">
             <span class="hint__icon" aria-hidden="true">🛡️</span>
             <span>Если сайт не загружается — включите VPN.</span>
@@ -341,7 +349,6 @@
                 { url: "https://windows93.net", description: "Веб-ОС в стиле пародии на Windows" },
                 { url: "https://webamp.org", description: "Веб-версия Winamp" },
                 { url: "https://imcdb.org", description: "База данных автомобилей в фильмах" },
-                { url: "https://plotz.co.uk", description: "Генератор моделей для Minecraft" },
                 { url: "https://eurobricks.com", description: "Форум для фанатов LEGO" },
                 { url: "https://brusheezy.com", description: "Бесплатные кисти для Photoshop" },
                 { url: "https://jstor.org", description: "Библиотека научных статей" },
@@ -421,28 +428,16 @@
             let secondsLeft = 0;
 
             const clearMainTimer = () => {
-                if (toastTimer) {
-                    window.clearTimeout(toastTimer);
-                    toastTimer = 0;
-                }
+                if (toastTimer) { window.clearTimeout(toastTimer); toastTimer = 0; }
             };
 
             const clearDescTimer = () => {
-                if (descTimer) {
-                    window.clearTimeout(descTimer);
-                    descTimer = 0;
-                }
+                if (descTimer) { window.clearTimeout(descTimer); descTimer = 0; }
             };
 
             const clearRedirectTimers = () => {
-                if (redirectTimer) {
-                    window.clearTimeout(redirectTimer);
-                    redirectTimer = 0;
-                }
-                if (countdownTimer) {
-                    window.clearInterval(countdownTimer);
-                    countdownTimer = 0;
-                }
+                if (redirectTimer) { window.clearTimeout(redirectTimer); redirectTimer = 0; }
+                if (countdownTimer) { window.clearInterval(countdownTimer); countdownTimer = 0; }
             };
 
             const clearAllTimers = () => {
@@ -485,7 +480,6 @@
                 toastText.textContent = message;
                 toast.style.setProperty("--toast-duration", `${duration}ms`);
                 toast.classList.remove("is-visible", "is-cancelable", "is-canceled");
-                // Reflow для перезапуска анимации прогресс-бара
                 void toast.offsetWidth;
                 if (cancelable) toast.classList.add("is-cancelable");
                 if (canceled) toast.classList.add("is-canceled");
@@ -506,24 +500,16 @@
                     let safeHref = "";
                     try {
                         const parsed = new URL(url);
-                        if (ALLOWED_PROTOCOLS.has(parsed.protocol)) {
-                            safeHref = parsed.href;
-                        }
-                    } catch {
-                        safeHref = "";
-                    }
+                        if (ALLOWED_PROTOCOLS.has(parsed.protocol)) safeHref = parsed.href;
+                    } catch { safeHref = ""; }
 
                     if (safeHref) {
-                        if (description) {
-                            toastDescText.appendChild(document.createTextNode(" · "));
-                        }
+                        if (description) toastDescText.appendChild(document.createTextNode(" · "));
                         const anchor = document.createElement("a");
                         anchor.href = safeHref;
                         anchor.target = "_blank";
                         anchor.rel = "noopener noreferrer";
-                        anchor.textContent = safeHref.length > 60
-                            ? safeHref.slice(0, 57) + "…"
-                            : safeHref;
+                        anchor.textContent = safeHref.length > 60 ? safeHref.slice(0, 57) + "…" : safeHref;
                         toastDescText.appendChild(anchor);
                     }
                 }
@@ -542,10 +528,7 @@
             };
 
             const pickRandomIndex = () => {
-                if (links.length === 1) {
-                    lastIndex = 0;
-                    return 0;
-                }
+                if (links.length === 1) { lastIndex = 0; return 0; }
                 let index = Math.floor(Math.random() * links.length);
                 if (index === lastIndex) {
                     index = (index + 1 + Math.floor(Math.random() * (links.length - 1))) % links.length;
@@ -558,25 +541,17 @@
                 let newTab = null;
                 try {
                     newTab = window.open(url, "_blank", "noopener,noreferrer");
-                } catch {
-                    newTab = null;
-                }
+                } catch { newTab = null; }
 
                 if (newTab) {
-                    try {
-                        newTab.opener = null;
-                    } catch {
-                        /* cross-origin */
-                    }
+                    try { newTab.opener = null; } catch { /* cross-origin */ }
                     return true;
                 }
 
                 try {
                     window.location.assign(url);
                     return false;
-                } catch {
-                    return false;
-                }
+                } catch { return false; }
             };
 
             const cancelPending = () => {
@@ -605,9 +580,8 @@
                 const url = item.url;
 
                 let parsed;
-                try {
-                    parsed = new URL(url);
-                } catch {
+                try { parsed = new URL(url); }
+                catch {
                     showMainToast("Ссылка недоступна", { duration: 2500 });
                     showDescToast("Ссылка недоступна", null, { duration: 2500 });
                     return;
@@ -647,9 +621,7 @@
                     const openedInTab = navigateTo(target);
                     setBusy(false);
 
-                    if (openedInTab) {
-                        hideAllToasts();
-                    }
+                    if (openedInTab) hideAllToasts();
                 }, REDIRECT_DELAY);
             };
 
@@ -681,7 +653,6 @@
                         countdownTimer = 0;
                     }
                 } else if (isOpening && redirectTimer && secondsLeft > 0) {
-                    // Возобновляем визуальный отсчёт после возврата на вкладку
                     startCountdown();
                 }
             });
