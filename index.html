@@ -207,18 +207,6 @@
             transform: scaleX(0);
         }
 
-        .visually-hidden {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -294,98 +282,37 @@
             "use strict";
 
             const rawLinks = [
-                {
-                    url: "https://mrrobot.fandom.com/ru/wiki/Привет,_друг",
-                    description: "Секретная страница приветствия"
-                },
-                {
-                    url: "https://www.magnific.com/ru/free-photos-vectors/символ-глаз",
-                    description: "Символ глаза — векторные фото"
-                },
-                {
-                    url: "https://info.cern.ch/hypertext/WWW/TheProject.html",
-                    description: "Первый сайт в истории интернета"
-                },
-                {
-                    url: "https://thispersondoesnotexist.com",
-                    description: "Фото людей, которых не существует"
-                },
-                {
-                    url: "https://thequietplaceproject.xyz",
-                    description: "Минута тишины — проект"
-                },
-                {
-                    url: "https://optical.toys",
-                    description: "Набор оптических иллюзий"
-                },
-                {
-                    url: "https://theuselessweb.com",
-                    description: "Кнопка ведёт на случайный бесполезный сайт"
-                },
-                {
-                    url: "https://zoomquilt.org",
-                    description: "Бесконечно приближающаяся картина"
-                },
-                {
-                    url: "https://weavesilk.com",
-                    description: "Рисование симметричных светящихся линий"
-                },
-                {
-                    url: "https://patatap.com",
-                    description: "Каждая клавиша — звук и анимация"
-                },
-                {
-                    url: "https://window-swap.com",
-                    description: "Вид из чужого окна"
-                },
-                {
-                    url: "https://radio.garden",
-                    description: "Глобус с радиостанциями мира"
-                },
-                {
-                    url: "https://pointerpointer.com",
-                    description: "Люди указывают на ваш курсор"
-                },
-                {
-                    url: "https://973-eht-namuh-973.com",
-                    description: "Классика странного интернета — шифры"
-                },
-                {
-                    url: "https://wwwwwwwww.jodi.org",
-                    description: "Арт-проект, имитирующий сломанный компьютер"
-                },
-                {
-                    url: "https://superbad.com",
-                    description: "Старый арт-проект со странной навигацией"
-                },
-                {
-                    url: "https://heavensgate.com",
-                    description: "Сайт секты «Врата Рая»"
-                },
-                {
-                    url: "https://fifthnail.com",
-                    description: "Архив блога перед преступлениями"
-                },
-                {
-                    url: "https://uvb-76.ru",
-                    description: "The Buzzer — жужжащий сигнал с 1982"
-                },
-                {
-                    url: "https://priyom.org",
-                    description: "Логи передач номерных станций"
-                },
-                {
-                    url: "https://planecrashinfo.com",
-                    description: "Архив авиакатастроф и переговоров"
-                },
-                {
-                    url: "https://www.tdcj.texas.gov/death_row/dr_executed_offenders.html",
-                    description: "Техас: смертники и последние слова"
-                },
-                {
-                    url: "https://www.rotten.com",
-                    description: "Старейший шок-сайт с архивом"
-                }
+                { url: "https://radio.garden", description: "Глобус с радиостанциями мира" },
+                { url: "https://dinosaurpictures.org/ancient-earth", description: "Интерактивная модель истории Земли" },
+                { url: "https://pastvu.com", description: "Исторические фотографии на карте" },
+                { url: "https://lightningmaps.org", description: "Карта молний в реальном времени" },
+                { url: "https://quickdraw.withgoogle.com", description: "Игра Google по распознаванию рисунков" },
+                { url: "https://paint.toys", description: "Коллекция инструментов для рисования" },
+                { url: "https://old-games.ru", description: "Архив старых игр" },
+                { url: "https://vidachestvo.ru", description: "История техники телевидения и видеозаписи" },
+                { url: "https://windows93.net", description: "Веб-ОС в стиле пародии на Windows" },
+                { url: "https://webamp.org", description: "Веб-версия Winamp" },
+                { url: "https://imcdb.org", description: "База данных автомобилей в фильмах" },
+                { url: "https://plotz.co.uk", description: "Генератор моделей для Minecraft" },
+                { url: "https://eurobricks.com", description: "Форум для фанатов LEGO" },
+                { url: "https://brusheezy.com", description: "Бесплатные кисти для Photoshop" },
+                { url: "https://jstor.org", description: "Библиотека научных статей" },
+                { url: "https://zoomquilt.org", description: "Бесконечно приближающаяся картина" },
+                { url: "https://neal.fun", description: "Интерактивные мини-проекты" },
+                { url: "https://maze.toys", description: "Коллекция лабиринтов" },
+                { url: "https://monkeytype.com", description: "Минималистичный тренажёр печати" },
+                { url: "https://orteil.dashnet.org/cookieclicker", description: "Классическая Cookie Clicker" },
+                { url: "https://tosdr.org", description: "Рейтинг условий обслуживания" },
+                { url: "https://antropogenez.ru", description: "Проект о происхождении человека" },
+                { url: "https://ourworldofpixels.com", description: "Бесконечный холст для пиксель-арта" },
+                { url: "https://jspaint.app", description: "Клон MS Paint" },
+                { url: "https://savethesounds.info", description: "Музей исчезающих звуков техники" },
+                { url: "https://checkboxrace.com", description: "Гонка с чекбоксами" },
+                { url: "https://www.nytimes.com/games/wordle", description: "Wordle — угадай слово" },
+                { url: "https://oskarstalberg.com/Townscaper", description: "Городской конструктор" },
+                { url: "https://userinyerface.com", description: "Худший интерфейс в мире" },
+                { url: "https://vivirenremoto.github.io/doomcaptcha", description: "DOOM вместо капчи" },
+                { url: "https://bongo.cat", description: "Кот играет на бонго" }
             ];
 
             const ALLOWED_PROTOCOLS = new Set(["https:", "http:"]);
