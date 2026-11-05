@@ -30,8 +30,8 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 100dvh;
             min-height: 100vh;
+            min-height: 100dvh;
             text-align: center;
             color: #1a1a1a;
             overflow-x: hidden;
@@ -61,7 +61,6 @@
             background: transparent;
             transition: transform 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
             animation: pulse 4s infinite ease-in-out;
-            will-change: transform;
             touch-action: manipulation;
         }
 
@@ -207,6 +206,35 @@
             transform: scaleX(0);
         }
 
+        /* Постоянная подпись-подсказка под уведомлениями */
+        .hint {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            width: 100%;
+            margin-top: 0.15rem;
+            padding: 0.5rem 0.9rem;
+            font-size: 0.75rem;
+            line-height: 1.3;
+            color: #5a6169;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 10px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .hint__icon {
+            flex-shrink: 0;
+            font-size: 0.9rem;
+            line-height: 1;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -250,6 +278,22 @@
             .toast {
                 border: 2px solid #fff;
             }
+            .hint {
+                color: #000;
+                background: #fff;
+                border-color: #000;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .toast-stack {
+                bottom: 1.25rem;
+                gap: 0.5rem;
+            }
+            .hint {
+                font-size: 0.7rem;
+                padding: 0.45rem 0.7rem;
+            }
         }
     </style>
 </head>
@@ -260,15 +304,19 @@
     <h1>Hello Friend</h1>
 
     <div class="toast-stack">
-        <div id="toast" class="toast toast--main" role="alert" aria-live="assertive">
+        <div id="toast" class="toast toast--main" role="alert" aria-live="assertive" aria-atomic="true">
             <span class="toast__icon" aria-hidden="true">🔗</span>
             <span class="toast__text" id="toastText"></span>
             <span class="toast__progress" aria-hidden="true"></span>
         </div>
-        <div id="toastDesc" class="toast toast--description" role="status" aria-live="polite">
+        <div id="toastDesc" class="toast toast--description" role="status" aria-live="polite" aria-atomic="true">
             <span class="toast__icon" aria-hidden="true">📝</span>
             <span class="toast__text" id="toastDescText"></span>
         </div>
+        <p class="hint" role="note">
+            <span class="hint__icon" aria-hidden="true">🛡️</span>
+            <span>Если сайт не загружается — включите VPN.</span>
+        </p>
     </div>
 
     <noscript>
@@ -336,7 +384,7 @@
             const links = Object.freeze(
                 rawLinks
                     .filter((item) => item && isValidUrl(item.url))
-                    .map((item) => ({
+                    .map((item) => Object.freeze({
                         url: item.url.trim(),
                         description: (item.description || "").trim()
                     }))
@@ -370,22 +418,31 @@
             let lastIndex = -1;
             let isOpening = false;
             let activeUrl = null;
+            let secondsLeft = 0;
 
             const clearMainTimer = () => {
-                window.clearTimeout(toastTimer);
-                toastTimer = 0;
+                if (toastTimer) {
+                    window.clearTimeout(toastTimer);
+                    toastTimer = 0;
+                }
             };
 
             const clearDescTimer = () => {
-                window.clearTimeout(descTimer);
-                descTimer = 0;
+                if (descTimer) {
+                    window.clearTimeout(descTimer);
+                    descTimer = 0;
+                }
             };
 
             const clearRedirectTimers = () => {
-                window.clearTimeout(redirectTimer);
-                window.clearInterval(countdownTimer);
-                redirectTimer = 0;
-                countdownTimer = 0;
+                if (redirectTimer) {
+                    window.clearTimeout(redirectTimer);
+                    redirectTimer = 0;
+                }
+                if (countdownTimer) {
+                    window.clearInterval(countdownTimer);
+                    countdownTimer = 0;
+                }
             };
 
             const clearAllTimers = () => {
@@ -428,6 +485,7 @@
                 toastText.textContent = message;
                 toast.style.setProperty("--toast-duration", `${duration}ms`);
                 toast.classList.remove("is-visible", "is-cancelable", "is-canceled");
+                // Reflow для перезапуска анимации прогресс-бара
                 void toast.offsetWidth;
                 if (cancelable) toast.classList.add("is-cancelable");
                 if (canceled) toast.classList.add("is-canceled");
@@ -477,9 +535,9 @@
 
             const showDescToast = (description, url, { duration = CANCEL_WINDOW } = {}) => {
                 if (!toastDesc) return;
+                clearDescTimer();
                 setDescContent(description, url);
                 toastDesc.classList.add("is-visible");
-                clearDescTimer();
                 descTimer = window.setTimeout(hideDescToast, duration);
             };
 
@@ -513,16 +571,31 @@
                     return true;
                 }
 
-                window.location.assign(url);
-                return false;
+                try {
+                    window.location.assign(url);
+                    return false;
+                } catch {
+                    return false;
+                }
             };
 
             const cancelPending = () => {
                 if (!isOpening) return;
                 clearAllTimers();
+                activeUrl = null;
                 setBusy(false);
                 showMainToast("Переход отменён", { duration: 2000, canceled: true });
                 showDescToast("Переход отменён", null, { duration: 2000 });
+            };
+
+            const startCountdown = () => {
+                if (countdownTimer) return;
+                countdownTimer = window.setInterval(() => {
+                    secondsLeft -= 1;
+                    if (secondsLeft > 0 && toastText && isOpening) {
+                        toastText.textContent = `Переход по случайной ссылке через ${secondsLeft}…`;
+                    }
+                }, 1000);
             };
 
             const openRandomLink = () => {
@@ -548,25 +621,18 @@
                 clearAllTimers();
                 setBusy(true);
                 activeUrl = url;
+                secondsLeft = Math.ceil(REDIRECT_DELAY / 1000);
 
-                let secondsLeft = Math.ceil(REDIRECT_DELAY / 1000);
                 showMainToast(`Переход по случайной ссылке через ${secondsLeft}…`, {
                     duration: CANCEL_WINDOW,
                     cancelable: true
                 });
                 showDescToast(item.description, url, { duration: CANCEL_WINDOW });
 
-                countdownTimer = window.setInterval(() => {
-                    secondsLeft -= 1;
-                    if (secondsLeft > 0 && toastText) {
-                        toastText.textContent = `Переход по случайной ссылке через ${secondsLeft}…`;
-                    }
-                }, 1000);
+                startCountdown();
 
                 redirectTimer = window.setTimeout(() => {
-                    window.clearInterval(countdownTimer);
-                    countdownTimer = 0;
-                    redirectTimer = 0;
+                    clearRedirectTimers();
 
                     const target = activeUrl;
                     if (!target) {
@@ -609,9 +675,14 @@
             });
 
             document.addEventListener("visibilitychange", () => {
-                if (document.hidden && countdownTimer) {
-                    window.clearInterval(countdownTimer);
-                    countdownTimer = 0;
+                if (document.hidden) {
+                    if (countdownTimer) {
+                        window.clearInterval(countdownTimer);
+                        countdownTimer = 0;
+                    }
+                } else if (isOpening && redirectTimer && secondsLeft > 0) {
+                    // Возобновляем визуальный отсчёт после возврата на вкладку
+                    startCountdown();
                 }
             });
 
