@@ -24,19 +24,16 @@
   --glow:rgba(255,255,255,.12);
   --radius:18px;
 
-  /* watcher palette */
-  --w-bg:rgba(8,8,10,.62);
-  --w-line:rgba(255,255,255,.10);
-  --w-glow:rgba(180,140,255,.16);
-  --w-iris:#0a0a0c;
+  /* unified top palette */
+  --top-line:rgba(255,255,255,.14);
+  --top-glow:rgba(255,255,255,.10);
+  --top-glow-strong:rgba(255,255,255,.22);
+  --top-badge-bg:linear-gradient(135deg,#f2f2f4,#a7a7ae);
+  --top-badge-shadow:0 0 14px rgba(255,255,255,.35);
 
-  /* console palette */
-  --c-bg:rgba(6,6,8,.72);
-  --c-line:rgba(70,214,138,.22);
-  --c-green:#46d68a;
-  --c-blue:#7cc7ff;
-  --c-red:#ff5a5a;
-  --c-orange:#ffab3d;
+  /* accents per card */
+  --w-eye:#b48cff;
+  --c-term:#46d68a;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html,body{min-height:100%;background:var(--bg);color:var(--fg);
@@ -69,7 +66,7 @@ body{
 .nav{display:flex;flex-direction:column;gap:.95rem;width:100%;max-width:480px;
   animation:fadeInUp 1.1s ease-out .2s both}
 
-/* === Базовая карточка === */
+/* === Base card === */
 .card{display:flex;align-items:center;justify-content:space-between;
   padding:1.4rem 1.6rem;text-decoration:none;color:inherit;
   background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
@@ -85,99 +82,86 @@ body{
 .card:hover::before{transform:translateX(100%)}
 .card:focus-visible{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,255,255,.18)}
 
-.card-content{display:flex;flex-direction:column;gap:.3rem;min-width:0}
-.card-title{font-size:1rem;font-weight:700;color:var(--fg);letter-spacing:.04em;display:flex;align-items:center;gap:.55rem;flex-wrap:wrap}
-.card-desc{font-size:.75rem;color:var(--dim);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.card-content{display:flex;flex-direction:column;gap:.32rem;min-width:0;flex:1 1 auto}
+.card-title{font-size:1rem;font-weight:700;color:var(--fg);letter-spacing:.04em;
+  display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;min-width:0}
+.card-desc{font-size:.75rem;color:var(--dim);
+  font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .card-icon{font-size:1.15rem;color:var(--dim);flex-shrink:0;margin-left:1rem;
   transition:color .3s ease,transform .3s ease}
 .card:hover .card-icon,.card:focus-visible .card-icon{color:var(--fg);transform:translateX(5px)}
 
+/* === Badge === */
 .badge{font-size:.54rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
   color:#050506;background:var(--accent);border-radius:999px;padding:.2rem .55rem;line-height:1.4;
   box-shadow:0 0 12px rgba(255,255,255,.3)}
 
-/* === TOP: Наблюдатель === */
-.card--watch{
-  background:linear-gradient(135deg,rgba(20,18,26,.85),rgba(6,6,8,.72));
-  border-color:var(--w-line);padding:1.7rem 1.8rem;
-  box-shadow:0 0 0 1px rgba(255,255,255,.04),0 0 44px var(--w-glow),inset 0 1px 0 rgba(255,255,255,.05);
+/* === TOP unified style === */
+.card--top{
+  background:linear-gradient(135deg,rgba(22,22,27,.88),rgba(8,8,10,.78));
+  border-color:var(--top-line);padding:1.7rem 1.8rem;
+  box-shadow:0 0 0 1px rgba(255,255,255,.04),0 0 44px var(--top-glow),inset 0 1px 0 rgba(255,255,255,.06);
 }
-.card--watch:hover{
-  border-color:rgba(180,140,255,.45);
-  box-shadow:0 0 0 1px rgba(180,140,255,.12),0 0 70px rgba(180,140,255,.26),0 14px 34px rgba(0,0,0,.55);
+.card--top:hover{
+  border-color:rgba(255,255,255,.45);
+  box-shadow:0 0 0 1px rgba(255,255,255,.10),0 0 70px var(--top-glow-strong),0 14px 34px rgba(0,0,0,.55);
 }
-.card--watch .card-title{font-size:1.12rem;letter-spacing:.08em}
-.card--watch .card-desc{color:#a7a7ae}
+.card--top .card-title{font-size:1.12rem;letter-spacing:.08em;font-weight:800}
+.card--top .card-desc{color:#a7a7ae;font-size:.78rem}
+.card--top .card-icon{font-size:1.25rem;color:var(--fg)}
 
-.eye-ico{
-  position:relative;width:34px;height:34px;border-radius:50%;
-  background:radial-gradient(circle at 50% 45%,#9a9aa1 0%,#4a4a52 55%,#0e0e11 100%);
-  box-shadow:0 0 22px rgba(180,140,255,.25),inset 0 0 10px rgba(0,0,0,.9);
-  flex-shrink:0;overflow:hidden;
+/* Badge top (unified) */
+.badge--top{
+  background:var(--top-badge-bg);
+  color:#050506;
+  box-shadow:var(--top-badge-shadow);
+  animation:badge-pulse 3.2s ease-in-out infinite;
 }
-.eye-ico::before{
-  content:"";position:absolute;top:50%;left:50%;width:60%;height:60%;
+@keyframes badge-pulse{
+  0%,100%{box-shadow:0 0 14px rgba(255,255,255,.30)}
+  50%{box-shadow:0 0 22px rgba(255,255,255,.55)}
+}
+
+/* === Unique accent icons (only in title start) === */
+.ico{position:relative;flex-shrink:0;display:inline-block}
+.ico-eye{
+  width:26px;height:26px;border-radius:50%;
+  background:radial-gradient(circle at 50% 45%,#cfcfd4 0%,#9a9aa1 40%,#4a4a52 75%,#0e0e11 100%);
+  box-shadow:0 0 16px rgba(180,140,255,.30),inset 0 0 10px rgba(0,0,0,.9);
+  overflow:hidden;
+}
+.ico-eye::before{
+  content:"";position:absolute;top:50%;left:50%;width:58%;height:58%;
   transform:translate(-50%,-50%);border-radius:50%;
-  background:radial-gradient(circle,#1a1a1e 0%,#000 70%);
+  background:radial-gradient(circle,#1a1a1e 0%,#000 72%);
   animation:eye-track 6s ease-in-out infinite;
 }
-.eye-ico::after{
-  content:"";position:absolute;top:50%;left:50%;width:22%;height:22%;
+.ico-eye::after{
+  content:"";position:absolute;top:50%;left:50%;width:20%;height:20%;
   transform:translate(-50%,-50%);border-radius:50%;
-  background:radial-gradient(circle,rgba(255,255,255,.45) 0%,transparent 70%);
-  filter:blur(1px);opacity:.5;
+  background:radial-gradient(circle,rgba(255,255,255,.5) 0%,transparent 70%);
+  filter:blur(1px);opacity:.55;
 }
 @keyframes eye-track{
   0%,100%{transform:translate(-50%,-50%)}
-  20%{transform:translate(-30%,-60%)}
-  45%{transform:translate(-70%,-40%)}
-  70%{transform:translate(-40%,-70%)}
+  20%{transform:translate(-32%,-60%)}
+  45%{transform:translate(-68%,-40%)}
+  70%{transform:translate(-40%,-68%)}
 }
-.badge--top{
-  background:linear-gradient(135deg,#e6e6ea,#b48cff);
-  color:#050506;
-  box-shadow:0 0 14px rgba(180,140,255,.5);
-  animation:badge-pulse 3.2s ease-in-out infinite;
-}
-@keyframes badge-pulse{0%,100%{box-shadow:0 0 14px rgba(180,140,255,.35)}50%{box-shadow:0 0 22px rgba(180,140,255,.65)}}
 
-/* === TOP: Консоль === */
-.card--console{
-  background:linear-gradient(135deg,rgba(6,6,8,.85),rgba(10,12,14,.72));
-  border-color:var(--c-line);padding:1.7rem 1.8rem;
-  box-shadow:0 0 0 1px rgba(70,214,138,.06),0 0 40px rgba(70,214,138,.10),inset 0 1px 0 rgba(70,214,138,.08);
+.ico-term{
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;
-}
-.card--console:hover{
-  border-color:rgba(70,214,138,.55);
-  box-shadow:0 0 0 1px rgba(70,214,138,.16),0 0 60px rgba(70,214,138,.22),0 14px 34px rgba(0,0,0,.55);
-}
-.card--console .card-title{
-  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  font-size:1.06rem;letter-spacing:.06em;font-weight:800;color:var(--c-green);
-}
-.card--console .card-title::before{content:"$ ";color:var(--c-green);opacity:.9}
-.card--console .card-desc{
-  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  color:var(--c-blue);opacity:.85;font-size:.72rem;
-}
-.card--console .card-desc::before{content:"anon@void:~ ";color:var(--c-red);opacity:.7;font-weight:700}
-.card--console .card-icon{
-  color:var(--c-green);font-family:ui-monospace,monospace;font-weight:900;
-  animation:console-cursor 1.1s step-end infinite;
-}
-.card--console:hover .card-icon{transform:none;color:var(--c-green)}
-@keyframes console-cursor{50%{opacity:0}}
-.card--console .badge--top{
-  background:linear-gradient(135deg,var(--c-green),var(--c-blue));
-  box-shadow:0 0 14px rgba(70,214,138,.4);
+  font-size:1.05rem;font-weight:900;color:var(--c-term,#46d68a);
+  line-height:1;letter-spacing:0;
+  text-shadow:0 0 12px rgba(70,214,138,.35);
 }
 
-/* === Обычные карточки === */
+/* === Plain cards === */
 .card--plain{padding:1.35rem 1.55rem}
 .card--plain .card-title{font-size:1rem}
 
-/* === Футер === */
+/* === Footer === */
 .footer{margin-top:3.5rem;font-size:.68rem;color:var(--mute);letter-spacing:.14em;text-align:center;
   animation:fadeInUp 1.1s ease-out .4s both;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 
@@ -193,8 +177,10 @@ body{
   .header{margin-bottom:2.25rem}
   .title{letter-spacing:.3em;text-indent:.3em}
   .card{padding:1.15rem 1.3rem}
-  .card--watch,.card--console{padding:1.35rem 1.4rem}
+  .card--top{padding:1.35rem 1.4rem}
   .nav{gap:.8rem}
+  .ico-eye{width:24px;height:24px}
+  .ico-term{font-size:1rem}
 }
 </style>
 </head>
@@ -213,12 +199,12 @@ body{
 
     <!-- НАБЛЮДАТЕЛЬ (TOP) -->
     <a href="https://hllfrnd.github.io/watcher/"
-       class="card card--watch" rel="noopener noreferrer"
+       class="card card--top" rel="noopener noreferrer"
        referrerpolicy="strict-origin-when-cross-origin"
        aria-label="Наблюдатель — интерактивная страница наблюдения (открыть в новой вкладке)">
       <div class="card-content">
         <div class="card-title">
-          <span class="eye-ico" aria-hidden="true"></span>
+          <span class="ico ico-eye" aria-hidden="true"></span>
           Наблюдатель
           <span class="badge badge--top" aria-hidden="true">top</span>
         </div>
@@ -229,16 +215,17 @@ body{
 
     <!-- КОНСОЛЬ (TOP) -->
     <a href="./console/"
-       class="card card--console" rel="noopener noreferrer"
+       class="card card--top" rel="noopener noreferrer"
        aria-label="Консоль — виртуальная система и следы">
       <div class="card-content">
         <div class="card-title">
+          <span class="ico ico-term" aria-hidden="true">$</span>
           Консоль
           <span class="badge badge--top" aria-hidden="true">top</span>
         </div>
         <div class="card-desc">виртуальная система и следы</div>
       </div>
-      <div class="card-icon" aria-hidden="true">▌</div>
+      <div class="card-icon" aria-hidden="true">→</div>
     </a>
 
     <!-- ПОРТАЛ -->
