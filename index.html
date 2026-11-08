@@ -23,6 +23,20 @@
   --accent:#ffffff;
   --glow:rgba(255,255,255,.12);
   --radius:18px;
+
+  /* watcher palette */
+  --w-bg:rgba(8,8,10,.62);
+  --w-line:rgba(255,255,255,.10);
+  --w-glow:rgba(180,140,255,.16);
+  --w-iris:#0a0a0c;
+
+  /* console palette */
+  --c-bg:rgba(6,6,8,.72);
+  --c-line:rgba(70,214,138,.22);
+  --c-green:#46d68a;
+  --c-blue:#7cc7ff;
+  --c-red:#ff5a5a;
+  --c-orange:#ffab3d;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html,body{min-height:100%;background:var(--bg);color:var(--fg);
@@ -44,7 +58,7 @@ body{
   padding:2.5rem 1.5rem}
 
 .header{display:flex;flex-direction:column;align-items:center;gap:.55rem;
-  margin-bottom:3.25rem;animation:fadeInDown 1.1s ease-out both}
+  margin-bottom:3rem;animation:fadeInDown 1.1s ease-out both}
 .logo{font-size:clamp(2.75rem,9vw,4.5rem);line-height:1;color:var(--accent);
   text-shadow:0 0 40px rgba(255,255,255,.22);animation:breathe 6s ease-in-out infinite}
 .title{font-size:clamp(1rem,3vw,1.35rem);font-weight:800;letter-spacing:.5em;text-indent:.5em;
@@ -52,9 +66,10 @@ body{
 .subtitle{font-size:.68rem;letter-spacing:.32em;color:var(--dim);text-transform:uppercase;
   font-family:ui-monospace,SFMono-Regular,Menlo,monospace;margin-top:.25rem}
 
-.nav{display:flex;flex-direction:column;gap:.9rem;width:100%;max-width:460px;
+.nav{display:flex;flex-direction:column;gap:.95rem;width:100%;max-width:480px;
   animation:fadeInUp 1.1s ease-out .2s both}
 
+/* === Базовая карточка === */
 .card{display:flex;align-items:center;justify-content:space-between;
   padding:1.4rem 1.6rem;text-decoration:none;color:inherit;
   background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
@@ -71,25 +86,99 @@ body{
 .card:focus-visible{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,255,255,.18)}
 
 .card-content{display:flex;flex-direction:column;gap:.3rem;min-width:0}
-.card-title{font-size:1rem;font-weight:700;color:var(--fg);letter-spacing:.04em}
+.card-title{font-size:1rem;font-weight:700;color:var(--fg);letter-spacing:.04em;display:flex;align-items:center;gap:.55rem;flex-wrap:wrap}
 .card-desc{font-size:.75rem;color:var(--dim);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .card-icon{font-size:1.15rem;color:var(--dim);flex-shrink:0;margin-left:1rem;
   transition:color .3s ease,transform .3s ease}
 .card:hover .card-icon,.card:focus-visible .card-icon{color:var(--fg);transform:translateX(5px)}
 
-.card--featured{background:linear-gradient(135deg,rgba(24,24,30,.85),rgba(10,10,13,.65));
-  border-color:var(--line-strong);padding:1.7rem 1.8rem;
-  box-shadow:0 0 0 1px rgba(255,255,255,.04),0 0 40px var(--glow),inset 0 1px 0 rgba(255,255,255,.06)}
-.card--featured:hover{border-color:rgba(255,255,255,.5);
-  box-shadow:0 0 0 1px rgba(255,255,255,.08),0 0 60px rgba(255,255,255,.2),0 14px 34px rgba(0,0,0,.55)}
-.card--featured .card-title{font-size:1.12rem;letter-spacing:.07em;display:flex;align-items:center;gap:.55rem}
-.card--featured .card-desc{color:#a7a7ae}
-
 .badge{font-size:.54rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
   color:#050506;background:var(--accent);border-radius:999px;padding:.2rem .55rem;line-height:1.4;
   box-shadow:0 0 12px rgba(255,255,255,.3)}
 
-.footer{margin-top:4rem;font-size:.68rem;color:var(--mute);letter-spacing:.14em;text-align:center;
+/* === TOP: Наблюдатель === */
+.card--watch{
+  background:linear-gradient(135deg,rgba(20,18,26,.85),rgba(6,6,8,.72));
+  border-color:var(--w-line);padding:1.7rem 1.8rem;
+  box-shadow:0 0 0 1px rgba(255,255,255,.04),0 0 44px var(--w-glow),inset 0 1px 0 rgba(255,255,255,.05);
+}
+.card--watch:hover{
+  border-color:rgba(180,140,255,.45);
+  box-shadow:0 0 0 1px rgba(180,140,255,.12),0 0 70px rgba(180,140,255,.26),0 14px 34px rgba(0,0,0,.55);
+}
+.card--watch .card-title{font-size:1.12rem;letter-spacing:.08em}
+.card--watch .card-desc{color:#a7a7ae}
+
+.eye-ico{
+  position:relative;width:34px;height:34px;border-radius:50%;
+  background:radial-gradient(circle at 50% 45%,#9a9aa1 0%,#4a4a52 55%,#0e0e11 100%);
+  box-shadow:0 0 22px rgba(180,140,255,.25),inset 0 0 10px rgba(0,0,0,.9);
+  flex-shrink:0;overflow:hidden;
+}
+.eye-ico::before{
+  content:"";position:absolute;top:50%;left:50%;width:60%;height:60%;
+  transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(circle,#1a1a1e 0%,#000 70%);
+  animation:eye-track 6s ease-in-out infinite;
+}
+.eye-ico::after{
+  content:"";position:absolute;top:50%;left:50%;width:22%;height:22%;
+  transform:translate(-50%,-50%);border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.45) 0%,transparent 70%);
+  filter:blur(1px);opacity:.5;
+}
+@keyframes eye-track{
+  0%,100%{transform:translate(-50%,-50%)}
+  20%{transform:translate(-30%,-60%)}
+  45%{transform:translate(-70%,-40%)}
+  70%{transform:translate(-40%,-70%)}
+}
+.badge--top{
+  background:linear-gradient(135deg,#e6e6ea,#b48cff);
+  color:#050506;
+  box-shadow:0 0 14px rgba(180,140,255,.5);
+  animation:badge-pulse 3.2s ease-in-out infinite;
+}
+@keyframes badge-pulse{0%,100%{box-shadow:0 0 14px rgba(180,140,255,.35)}50%{box-shadow:0 0 22px rgba(180,140,255,.65)}}
+
+/* === TOP: Консоль === */
+.card--console{
+  background:linear-gradient(135deg,rgba(6,6,8,.85),rgba(10,12,14,.72));
+  border-color:var(--c-line);padding:1.7rem 1.8rem;
+  box-shadow:0 0 0 1px rgba(70,214,138,.06),0 0 40px rgba(70,214,138,.10),inset 0 1px 0 rgba(70,214,138,.08);
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;
+}
+.card--console:hover{
+  border-color:rgba(70,214,138,.55);
+  box-shadow:0 0 0 1px rgba(70,214,138,.16),0 0 60px rgba(70,214,138,.22),0 14px 34px rgba(0,0,0,.55);
+}
+.card--console .card-title{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:1.06rem;letter-spacing:.06em;font-weight:800;color:var(--c-green);
+}
+.card--console .card-title::before{content:"$ ";color:var(--c-green);opacity:.9}
+.card--console .card-desc{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color:var(--c-blue);opacity:.85;font-size:.72rem;
+}
+.card--console .card-desc::before{content:"anon@void:~ ";color:var(--c-red);opacity:.7;font-weight:700}
+.card--console .card-icon{
+  color:var(--c-green);font-family:ui-monospace,monospace;font-weight:900;
+  animation:console-cursor 1.1s step-end infinite;
+}
+.card--console:hover .card-icon{transform:none;color:var(--c-green)}
+@keyframes console-cursor{50%{opacity:0}}
+.card--console .badge--top{
+  background:linear-gradient(135deg,var(--c-green),var(--c-blue));
+  box-shadow:0 0 14px rgba(70,214,138,.4);
+}
+
+/* === Обычные карточки === */
+.card--plain{padding:1.35rem 1.55rem}
+.card--plain .card-title{font-size:1rem}
+
+/* === Футер === */
+.footer{margin-top:3.5rem;font-size:.68rem;color:var(--mute);letter-spacing:.14em;text-align:center;
   animation:fadeInUp 1.1s ease-out .4s both;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 
 @keyframes breathe{0%,100%{opacity:.82;transform:scale(1)}50%{opacity:1;transform:scale(1.03)}}
@@ -101,10 +190,11 @@ body{
     transition-duration:.001ms!important}
 }
 @media (max-width:600px){
-  .header{margin-bottom:2.5rem}
+  .header{margin-bottom:2.25rem}
   .title{letter-spacing:.3em;text-indent:.3em}
   .card{padding:1.15rem 1.3rem}
-  .card--featured{padding:1.35rem 1.4rem}
+  .card--watch,.card--console{padding:1.35rem 1.4rem}
+  .nav{gap:.8rem}
 }
 </style>
 </head>
@@ -116,20 +206,43 @@ body{
   <header class="header">
     <div class="logo" aria-hidden="true">☉</div>
     <h1 class="title">Hello Friend</h1>
+    <p class="subtitle">digital archive</p>
   </header>
 
   <nav class="nav" aria-label="Основная навигация">
+
+    <!-- НАБЛЮДАТЕЛЬ (TOP) -->
     <a href="https://hllfrnd.github.io/watcher/"
-       class="card card--featured" rel="noopener"
-       aria-label="Watcher (новая страница)">
+       class="card card--watch" rel="noopener noreferrer"
+       referrerpolicy="strict-origin-when-cross-origin"
+       aria-label="Наблюдатель — интерактивная страница наблюдения (открыть в новой вкладке)">
       <div class="card-content">
-        <div class="card-title">Watcher <span class="badge" aria-hidden="true">new</span></div>
+        <div class="card-title">
+          <span class="eye-ico" aria-hidden="true"></span>
+          Наблюдатель
+          <span class="badge badge--top" aria-hidden="true">top</span>
+        </div>
         <div class="card-desc">наблюдение · сигналы · следы</div>
       </div>
       <div class="card-icon" aria-hidden="true">→</div>
     </a>
 
-    <a href="./portal/" class="card" aria-label="Портал — случайные находки">
+    <!-- КОНСОЛЬ (TOP) -->
+    <a href="./console/"
+       class="card card--console" rel="noopener noreferrer"
+       aria-label="Консоль — виртуальная система и следы">
+      <div class="card-content">
+        <div class="card-title">
+          Консоль
+          <span class="badge badge--top" aria-hidden="true">top</span>
+        </div>
+        <div class="card-desc">виртуальная система и следы</div>
+      </div>
+      <div class="card-icon" aria-hidden="true">▌</div>
+    </a>
+
+    <!-- ПОРТАЛ -->
+    <a href="./portal/" class="card card--plain" aria-label="Портал — случайные находки">
       <div class="card-content">
         <div class="card-title">Портал</div>
         <div class="card-desc">случайные находки и скрытые места</div>
@@ -137,14 +250,23 @@ body{
       <div class="card-icon" aria-hidden="true">→</div>
     </a>
 
-    <a href="./console/" class="card" aria-label="Консоль — виртуальная система">
+    <!-- НОСТАЛЬГИЯ -->
+    <a href="https://hllfrnd.github.io/nostalgia/"
+       class="card card--plain" rel="noopener noreferrer"
+       referrerpolicy="strict-origin-when-cross-origin"
+       aria-label="Ностальгия — цифровой архив прошлого (открыть в новой вкладке)">
       <div class="card-content">
-        <div class="card-title">Консоль</div>
-        <div class="card-desc">виртуальная система и следы</div>
+        <div class="card-title">Ностальгия</div>
+        <div class="card-desc">архив · тексты · картинки · то время</div>
       </div>
       <div class="card-icon" aria-hidden="true">→</div>
     </a>
+
   </nav>
+
+  <footer class="footer">
+    <span>☉</span> hllfrnd · archive
+  </footer>
 </main>
 </body>
 </html>
