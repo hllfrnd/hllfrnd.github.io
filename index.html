@@ -21,7 +21,6 @@
   --card:rgba(14,14,17,.55);
   --card-hover:rgba(22,22,27,.75);
   --accent:#ffffff;
-  --glow:rgba(255,255,255,.12);
   --radius:18px;
 
   /* unified top palette */
@@ -30,10 +29,6 @@
   --top-glow-strong:rgba(255,255,255,.22);
   --top-badge-bg:linear-gradient(135deg,#f2f2f4,#a7a7ae);
   --top-badge-shadow:0 0 14px rgba(255,255,255,.35);
-
-  /* accents per card */
-  --w-eye:#b48cff;
-  --c-term:#46d68a;
 }
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html,body{min-height:100%;background:var(--bg);color:var(--fg);
@@ -123,7 +118,7 @@ body{
   50%{box-shadow:0 0 22px rgba(255,255,255,.55)}
 }
 
-/* === Unique accent icons (only in title start) === */
+/* === Unique accent icon (only in title start) === */
 .ico{position:relative;flex-shrink:0;display:inline-block}
 .ico-eye{
   width:26px;height:26px;border-radius:50%;
@@ -150,13 +145,6 @@ body{
   70%{transform:translate(-40%,-68%)}
 }
 
-.ico-term{
-  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace;
-  font-size:1.05rem;font-weight:900;color:var(--c-term,#46d68a);
-  line-height:1;letter-spacing:0;
-  text-shadow:0 0 12px rgba(70,214,138,.35);
-}
-
 /* === Plain cards === */
 .card--plain{padding:1.35rem 1.55rem}
 .card--plain .card-title{font-size:1rem}
@@ -180,7 +168,6 @@ body{
   .card--top{padding:1.35rem 1.4rem}
   .nav{gap:.8rem}
   .ico-eye{width:24px;height:24px}
-  .ico-term{font-size:1rem}
 }
 </style>
 </head>
@@ -213,16 +200,10 @@ body{
       <div class="card-icon" aria-hidden="true">→</div>
     </a>
 
-    <!-- КОНСОЛЬ (TOP) -->
-    <a href="./console/"
-       class="card card--top" rel="noopener noreferrer"
-       aria-label="Консоль — виртуальная система и следы">
+    <!-- КОНСОЛЬ -->
+    <a href="./console/" class="card card--plain" aria-label="Консоль — виртуальная система и следы">
       <div class="card-content">
-        <div class="card-title">
-          <span class="ico ico-term" aria-hidden="true">$</span>
-          Консоль
-          <span class="badge badge--top" aria-hidden="true">top</span>
-        </div>
+        <div class="card-title">Консоль</div>
         <div class="card-desc">виртуальная система и следы</div>
       </div>
       <div class="card-icon" aria-hidden="true">→</div>
@@ -233,18 +214,6 @@ body{
       <div class="card-content">
         <div class="card-title">Портал</div>
         <div class="card-desc">случайные находки и скрытые места</div>
-      </div>
-      <div class="card-icon" aria-hidden="true">→</div>
-    </a>
-
-    <!-- НОСТАЛЬГИЯ -->
-    <a href="https://hllfrnd.github.io/nostalgia/"
-       class="card card--plain" rel="noopener noreferrer"
-       referrerpolicy="strict-origin-when-cross-origin"
-       aria-label="Ностальгия — цифровой архив прошлого (открыть в новой вкладке)">
-      <div class="card-content">
-        <div class="card-title">Ностальгия</div>
-        <div class="card-desc">архив · тексты · картинки · то время</div>
       </div>
       <div class="card-icon" aria-hidden="true">→</div>
     </a>
